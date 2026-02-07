@@ -18,9 +18,6 @@ The main goal of this project is to demonstrate understanding of:
 
 - Java 17
 - Spring Boot
-- Spring Data JPA
-- Hibernate
-- PostgreSQL
 - Maven
 - Postman
 
