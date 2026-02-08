@@ -1,93 +1,38 @@
 # Dream API — Endterm Project
 
 ## A. Project Overview
+Dream API is a RESTful Spring Boot application that manages Dream entities and provides full CRUD functionality via a JSON-based REST API.
 
-Dream API is a RESTful web application developed using Spring Boot.  
-The project manages Dream entities and provides full CRUD functionality through a REST API.
-
-The main goal of this project is to demonstrate understanding of:
-- REST architecture
-- layered application design
-- object-oriented principles
-- design patterns
-- proper error handling
-
----
-
-## B. Technologies Used
-
-- Java 17
-- Spring Boot
-- Maven
-- Postman
+The project demonstrates:
+- REST architecture and HTTP status codes
+- Layered application design
+- Object-Oriented Programming principles
+- Design patterns usage
+- Database integration
+- Global exception handling
+- API testing using Postman
 
 ---
 
-## C. Application Architecture
+## B. REST API Documentation
 
-The project follows a layered architecture:
-
-- Controller layer — handles HTTP requests and responses
-- Service layer — contains business logic
-- Repository layer — handles database access
-- DTO layer — separates API models from entities
-- Model layer — domain entities
-- Exception layer — global error handling
-- Patterns & Utils — design patterns implementation
-
-This structure improves readability, testability, and maintainability.
-
----
-
-## D. Component Principles
-
-The application follows basic component design principles:
-
-**REP (Reuse-Release Equivalence Principle)**  
-Classes that change together (e.g. service and repository logic) are grouped in the same packages.
-
-**CCP (Common Closure Principle)**  
-Changes related to business logic usually affect only the service layer, without impacting controllers or repositories.
-
-**CRP (Common Reuse Principle)**  
-Independent components (DTOs, exceptions, patterns) are separated to avoid unnecessary coupling.
-
----
-
-## E. Design Patterns Used
-
-### Singleton
-`AppLogger` is implemented as a Singleton to ensure only one logging instance is used across the application.
-
-### Builder
-The Builder pattern is implemented inside the `Dream` entity to simplify object creation and improve readability.
-
-### Factory
-`DreamFactory` encapsulates the logic of creating different dream types  
-(`NormalDream`, `LucidDream`, `NightmareDream`) based on input data.
-
----
-
-## F. REST API Endpoints
+### Endpoint List
 
 | Method | Endpoint | Description | Status |
-|------|--------|------------|--------|
-| POST | `/api/dreams` | Create a new dream | 201 |
-| GET | `/api/dreams` | Get all dreams | 200 |
-| GET | `/api/dreams/{id}` | Get dream by ID | 200 / 404 |
-| PUT | `/api/dreams/{id}` | Update dream | 200 |
-| DELETE | `/api/dreams/{id}` | Delete dream | 204 |
+|------|---------|------------|--------|
+| POST | /api/dreams | Create a new dream | 201 |
+| GET | /api/dreams | Get all dreams | 200 |
+| GET | /api/dreams/{id} | Get dream by ID | 200 / 404 |
+| PUT | /api/dreams/{id} | Update dream by ID | 200 |
+| DELETE | /api/dreams/{id} | Delete dream by ID | 204 |
 
----
+### Sample JSON Requests & Responses
 
-## G. Sample JSON Requests & Responses
-
-### Create Dream (POST)
-
+#### Create Dream (POST)
 ```json
 {
-  "title": "Flying",
-  "description": "I was flying over the city",
+  "title": "Flying dream",
+  "description": "I was flying above the city",
   "type": "LUCID",
   "intensity": 8
 }
@@ -104,87 +49,149 @@ The Builder pattern is implemented inside the `Dream` entity to simplify object 
   "intensity": 8
 }
 ```
----
-
-## H. Error Handling
-
-Global exception handling is implemented using @RestControllerAdvice.
-Handled errors:
-- Resource not found (404 Not Found )
-- Invalid input data
-
-Errors are returned in a structured format using the **ApiError** class.
-
-Example error response:
+### Error Response Example (404 Not Found)
 ```json
 {
-  "message": "Dream not found",
-  "status": 404
+  "message": "Dream not found: 999",
+  "status": 404,
+  "timestamp": "2026-02-08T10:40:00"
 }
 ```
----
+The same JSON structure is used for PUT requests, and GET responses return identical objects.
 
-## I. Database Design
-The application uses PostgreSQL with a single main table:
 
-**dreams**
-- id (Primary Key)
-- title
-- description
-- type
-- intensity
 
-Hibernate is used for ORM mapping.
-
----
-
-## J. UML Diagram
-
-The UML diagram reflects:
-
-- layered architecture
-- entity relationships
-- inheritance
-- applied design patterns
-
-Location:
-```bash
-docs/uml.png
-```
-
----
-
-## K. Postman Testing
-All API endpoints were tested using Postman.
-
+### Postman Screenshots
+All endpoints were tested in Postman.
 
 Screenshots are located in:
-```bash
-docs/screenshots/
+
+- docs/screenshots/
+
+Embedded proof (screenshots):
+- POST (201 Created)
+![01_post_201.png](docs/screenshots/01_post_201.png)
+- GET all (200 OK)
+![02_get_all_200.png](docs/screenshots/02_get_all_200.png)
+- GET by id (200 OK)
+![03_get_by_id_200.png](docs/screenshots/03_get_by_id_200.png)
+- PUT (200 OK)
+![04_put_200.png](docs/screenshots/04_put_200.png)
+- DELETE (204 No Content)
+![05_delete_204.png](docs/screenshots/05_delete_204.png)
+- GET after delete (404 Not Found)
+![06_get_after_delete_404.png](docs/screenshots/06_get_after_delete_404.png)
+---
+
+## C. Design Patterns Section
+### Singleton
+**Class**: AppLogger
+
+**Purpose**: Ensures a single shared logger instance across the application to keep logging consistent and centralized.
+
+### Factory
+**Class**: DreamFactory
+
+**Purpose**: Encapsulates creation logic for different dream types (e.g., NormalDream, LucidDream, NightmareDream) based on the input type.
+
+### Builder
+**Class**: Dream (Builder inside the model)
+
+**Purpose**: Simplifies constructing Dream objects with optional fields and improves readability (fluent style).
+
+
+---
+
+## D.  Component Principles Section
+
+### REP (Reuse-Release Equivalence Principle)
+
+Related classes that are released/changed together are grouped into cohesive packages (controller, service, repository, dto, exception, patterns, utils).
+
+### CCP (Common Closure Principle)
+
+Changes in business rules primarily affect the service layer, reducing the impact on controllers and other components.
+
+### CRP (Common Reuse Principle)
+
+DTOs, exceptions, patterns, and utils are separated into distinct packages to prevent unnecessary coupling and improve reuse.
+
+---
+
+## E. SOLID & OOP Summary
+
+- S (Single Responsibility): Controllers handle HTTP, services handle business logic, repositories handle data access.
+
+- O (Open/Closed): New dream types can be added via new subclasses without changing existing logic heavily.
+
+- L (Liskov Substitution): Dream subtype objects can be used where the base type is expected.
+
+- I (Interface Segregation): Layers expose only what is needed for their purpose.
+
+- D (Dependency Inversion): Service depends on repository abstraction/contract (data access separated from business logic).
+
+OOP features used:
+
+- Encapsulation in models and DTOs
+
+- Inheritance for dream type hierarchy
+
+- Polymorphism via base dream type + subclasses
+
+---
+
+## F. Database Schema
+
+Database: **dream_api (PostgreSQL)**
+Main table: **dreams**
+
+``` sql
+CREATE TABLE IF NOT EXISTS dreams (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  type TEXT NOT NULL,
+  description TEXT,
+  intensity INTEGER
+);
 ```
-Included tests:
-- POST → 201 Created
-- GET all → 200 OK
-- GET by ID → 200 OK
-- PUT → 200 OK
-- DELETE → 204 No Content
-- GET after delete → 404 Not Found
+
+Fields:
+
+- id — Primary key
+
+- title — dream title (required)
+
+- type — dream type (required)
+
+- description — dream description (optional)
+
+- intensity — intensity level (optional)
+
+## G. System Architecture Diagram
+UML/System Architecture diagram is stored at:
+- docs/uml.png
+
+![uml.png](docs/uml.png)
+
+## H. Instructions to Run the Spring Boot Application
+
+### 1) Create PostgreSQL Database
+### 2) Configure application.properties
+Update:
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/simpledb
+spring.datasource.username=postgres
+spring.datasource.password=1234
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+server.port=8080
+```
+### 3) Run Application.java from IntelliJ IDEA
+### 4)Test endpoints using Postman
+
 ---
 
-## L. How to Run the Project
-1. Create a PostgreSQL database
-2. Update **application.properties** with database credentials
-3. Run the Spring Boot application
-4. Test endpoints using Postman
-
----
-
-## M. Reflection
-This project helped me better understand how REST APIs are structured in Spring Boot.
-I gained practical experience with layered architecture, design patterns, and global error handling.
-The UML design helped visualize the system before implementation.
-
----
-
-
-
+## I. Reflection Section
+This project helped me understand how to build a complete Spring Boot REST API with proper layering, error handling, and database integration. I also improved my understanding of design patterns (Singleton, Factory, Builder) and how to apply component principles for clean structure. Postman testing and UML design helped validate correctness and document the system clearly.

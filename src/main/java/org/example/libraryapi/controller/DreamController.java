@@ -21,34 +21,35 @@ public class DreamController {
         this.service = service;
     }
 
-    // CREATE
+    // Create
     @PostMapping
     public ResponseEntity<DreamResponse> create(@RequestBody DreamRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.create(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 
-    // READ ALL
+
+    // Read all
     @GetMapping
     public List<DreamResponse> getAll() {
         return service.getAll();
     }
 
-    // READ BY ID
+    // Read by id
     @GetMapping("/{id}")
-    public DreamResponse getById(@PathVariable Long id) {
+    public DreamResponse getById(@PathVariable long id) {
         return service.getById(id);
     }
 
-    // UPDATE
+    // Update
     @PutMapping("/{id}")
-    public DreamResponse update(@PathVariable Long id, @RequestBody DreamRequest request) {
-        return service.update(id, request);
+    public ResponseEntity<Void> update(@PathVariable long id, @RequestBody DreamRequest request) {
+        service.update(id, request);
+        return ResponseEntity.noContent().build();
     }
 
-    // DELETE
+    // Delete
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
