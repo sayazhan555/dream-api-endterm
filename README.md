@@ -167,11 +167,25 @@ Fields:
 
 - intensity — intensity level (optional)
 
+## Database Integration
+
+The application is connected to a relational PostgreSQL database.
+
+- PostgreSQL is used as the relational database
+- JDBC (JdbcTemplate) is used for data access
+- The database contains a `dreams` table
+- CRUD operations are performed via SQL queries 
+- Database connection properties are configured in `application.properties`.
+
+![pgAdmin_png.png](docs/pgAdmin_png.png)
+
 ## G. System Architecture Diagram
 UML/System Architecture diagram is stored at:
 - docs/uml.png
 
 ![uml.png](docs/uml.png)
+
+
 
 ## H. Instructions to Run the Spring Boot Application
 
