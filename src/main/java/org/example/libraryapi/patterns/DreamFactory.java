@@ -9,23 +9,21 @@ import org.example.libraryapi.model.NormalDream;
 public class DreamFactory {
 
     public static DreamBase fromRequest(DreamRequest req) {
-        String type = req.getType() == null ? "NORMAL" : req.getType().toUpperCase();
+        String type = (req.getType() == null) ? "NORMAL" : req.getType().toUpperCase();
 
         Integer intensity = req.getIntensity();
         if (intensity == null) {
-            if (type.equals("NIGHTMARE")) intensity = 9;
-            else if (type.equals("LUCID")) intensity = 7;
-            else intensity = 5;
+            intensity = switch (type) {
+                case "NIGHTMARE" -> 9;
+                case "LUCID" -> 7;
+                default -> 5;
+            };
         }
 
-        String title = req.getTitle();
-        String description = req.getDescription();
-
         return switch (type) {
-            case "NIGHTMARE" -> new NightmareDream(title, description, intensity);
-            case "LUCID" -> new LucidDream(title, description, intensity);
-            default -> new NormalDream(title, description, intensity);
+            case "NIGHTMARE" -> new NightmareDream(req.getTitle(), req.getDescription(), intensity);
+            case "LUCID" -> new LucidDream(req.getTitle(), req.getDescription(), intensity);
+            default -> new NormalDream(req.getTitle(), req.getDescription(), intensity);
         };
     }
 }
-

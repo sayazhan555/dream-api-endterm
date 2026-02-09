@@ -16,38 +16,44 @@ public class DreamRepositoryJdbc {
         this.jdbc = jdbc;
     }
 
+    //Create
     public Dream save(Dream dream) {
         jdbc.update(
-                "INSERT INTO dreams(title, type, description) VALUES (?, ?, ?)",
-                dream.getTitle(), dream.getType(), dream.getDescription()
+                "INSERT INTO dreams(title, type, description, intensity) VALUES (?, ?, ?, ?)",
+                dream.getTitle(), dream.getType(), dream.getDescription(), dream.getIntensity()
         );
         return dream;
     }
 
 
+    //Read all
     public List<Dream> findAll() {
         return jdbc.query(
-                "SELECT id, title, type, description FROM dreams ORDER BY id",
+                "SELECT id, title, type, description, intensity FROM dreams ORDER BY id",
                 (rs, rowNum) -> {
                     Dream d = new Dream();
                     d.setId(rs.getLong("id"));
                     d.setTitle(rs.getString("title"));
                     d.setType(rs.getString("type"));
                     d.setDescription(rs.getString("description"));
+                    d.setIntensity(rs.getInt("intensity"));
                     return d;
                 }
         );
     }
 
+
+    //Read one
     public Optional<Dream> findById(long id) {
         List<Dream> list = jdbc.query(
-                "SELECT id, title, type, description FROM dreams WHERE id = ?",
+                "SELECT id, title, type, description, intensity FROM dreams WHERE id = ?",
                 (rs, rowNum) -> {
                     Dream d = new Dream();
                     d.setId(rs.getLong("id"));
                     d.setTitle(rs.getString("title"));
                     d.setType(rs.getString("type"));
                     d.setDescription(rs.getString("description"));
+                    d.setIntensity(rs.getInt("intensity"));
                     return d;
                 },
                 id
@@ -57,8 +63,8 @@ public class DreamRepositoryJdbc {
 
     public boolean update(long id, Dream dream) {
         int updated = jdbc.update(
-                "UPDATE dreams SET title=?, type=?, description=? WHERE id=?",
-                dream.getTitle(), dream.getType(), dream.getDescription(), id
+                "UPDATE dreams SET title=?, type=?, description=?, intensity=? WHERE id=?",
+                dream.getTitle(), dream.getType(), dream.getDescription(), dream.getIntensity(), id
         );
         return updated > 0;
     }

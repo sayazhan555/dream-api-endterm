@@ -4,6 +4,8 @@ import org.example.libraryapi.dto.DreamRequest;
 import org.example.libraryapi.dto.DreamResponse;
 import org.example.libraryapi.exception.NotFoundException;
 import org.example.libraryapi.model.Dream;
+import org.example.libraryapi.model.DreamBase;
+import org.example.libraryapi.patterns.DreamFactory;
 import org.example.libraryapi.repository.DreamRepositoryJdbc;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,15 @@ public class DreamService {
 
     // Create
     public DreamResponse create(DreamRequest request) {
-        Dream dream = toModel(request);
+        DreamBase base = DreamFactory.fromRequest(request); // Factory выбирает Lucid/Nightmare/Normal
+
+        Dream dream = Dream.builder()
+                .title(base.getTitle())
+                .description(base.getDescription())
+                .type(base.getType())
+                .intensity(base.getIntensity())
+                .build();
+
         Dream saved = repo.save(dream);
         return toResponse(saved);
     }
@@ -41,7 +51,15 @@ public class DreamService {
 
     // Update
     public void update(long id, DreamRequest request) {
-        Dream dream = toModel(request);
+        DreamBase base = DreamFactory.fromRequest(request);
+
+        Dream dream = Dream.builder()
+                .title(base.getTitle())
+                .description(base.getDescription())
+                .type(base.getType())
+                .intensity(base.getIntensity())
+                .build();
+
         if (!repo.update(id, dream)) {
             throw new NotFoundException("Dream not found: " + id);
         }
@@ -54,15 +72,6 @@ public class DreamService {
         }
     }
 
-    // MAPPERS
-    private Dream toModel(DreamRequest req) {
-        Dream d = new Dream();
-        d.setTitle(req.getTitle());
-        d.setType(req.getType());
-        d.setDescription(req.getDescription());
-        return d;
-    }
-
     private DreamResponse toResponse(Dream d) {
         return new DreamResponse(
                 d.getId(),
@@ -72,5 +81,4 @@ public class DreamService {
                 d.getIntensity()
         );
     }
-
 }

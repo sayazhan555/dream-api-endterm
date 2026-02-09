@@ -177,7 +177,7 @@ The application is connected to a relational PostgreSQL database.
 - CRUD operations are performed via SQL queries 
 - Database connection properties are configured in `application.properties`.
 
-![pgAdmin_png.png](docs/pgAdmin_png.png)
+![pgAdmin_pngg.png](docs/pgAdmin_pngg.png)
 
 ## G. System Architecture Diagram
 UML/System Architecture diagram is stored at:
