@@ -108,7 +108,7 @@ for frequently requested data.
 
 ### Cache Design
 - Implemented DreamCache using the Singleton pattern
-- Cache is stored in memory (JVM)
+- Cache is stored in memory (JVM) using an in-memory data structure
 - Only one cache instance exists during application runtime
 
 ### Cached Operation
@@ -116,12 +116,12 @@ for frequently requested data.
 - Endpoint affected: GET /api/dreams
 
 ### Behavior
-- First request → Cache MISS → Database query executed (DB HIT)
-- Subsequent requests → Cache HIT → Data returned from memory
-- Database is not queried while cache is valid
+- First request results in a Cache MISS, causing a database query (DB HIT)
+- Subsequent requests result in a Cache HIT, returning data from memory
+- No database access occurs while the cache remains valid
 
 ### Cache Invalidation
-To prevent stale data, cache is cleared automatically after:
+To maintain data consistency and prevent stale data, cache is cleared automatically after:
 
 - create(...)
 - update(...)
