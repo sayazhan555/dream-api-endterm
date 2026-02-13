@@ -1,5 +1,6 @@
 package org.example.libraryapi.service;
 
+import org.example.libraryapi.cache.DreamCache;
 import org.example.libraryapi.dto.DreamRequest;
 import org.example.libraryapi.dto.DreamResponse;
 import org.example.libraryapi.exception.NotFoundException;
@@ -15,6 +16,7 @@ import java.util.List;
 public class DreamService {
 
     private final DreamRepositoryJdbc repo;
+    private final DreamCache cache = DreamCache.getInstance(); //  Singleton cache
 
     public DreamService(DreamRepositoryJdbc repo) {
         this.repo = repo;
@@ -22,7 +24,7 @@ public class DreamService {
 
     // Create
     public DreamResponse create(DreamRequest request) {
-        DreamBase base = DreamFactory.fromRequest(request); // Factory выбирает Lucid/Nightmare/Normal
+        DreamBase base = DreamFactory.fromRequest(request);
 
         Dream dream = Dream.builder()
                 .title(base.getTitle())
@@ -32,17 +34,33 @@ public class DreamService {
                 .build();
 
         Dream saved = repo.save(dream);
+
+        cache.clear(); //  invalidate cache after create
         return toResponse(saved);
     }
 
-    // Read all
+    // Read all (CACHED)
     public List<DreamResponse> getAll() {
-        return repo.findAll().stream()
+
+        if (cache.hasCache()) {
+            return cache.getDreams().stream()
+                    .map(this::toResponse)
+                    .toList();
+        }
+
+
+        List<Dream> dreams = repo.findAll();
+
+
+        cache.putDreams(dreams);
+
+
+        return dreams.stream()
                 .map(this::toResponse)
                 .toList();
     }
 
-    // Read by id
+    // Read by id (без кэша — норм для simple cache)
     public DreamResponse getById(long id) {
         Dream dream = repo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Dream not found: " + id));
@@ -63,6 +81,8 @@ public class DreamService {
         if (!repo.update(id, dream)) {
             throw new NotFoundException("Dream not found: " + id);
         }
+
+        cache.clear(); // invalidate cache after update
     }
 
     // Delete
@@ -70,6 +90,8 @@ public class DreamService {
         if (!repo.delete(id)) {
             throw new NotFoundException("Dream not found: " + id);
         }
+
+        cache.clear(); //  invalidate cache after delete
     }
 
     private DreamResponse toResponse(Dream d) {

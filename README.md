@@ -99,6 +99,45 @@ Embedded proof (screenshots):
 
 **Purpose**: Simplifies constructing Dream objects with optional fields and improves readability (fluent style).
 
+---
+
+## Bonus Task — Caching Layer (Simple In-Memory Cache)
+
+A simple in-memory caching mechanism was implemented to improve performance
+for frequently requested data.
+
+### Cache Design
+- Implemented DreamCache using the Singleton pattern
+- Cache is stored in memory (JVM)
+- Only one cache instance exists during application runtime
+
+### Cached Operation
+- Cached service method: DreamService#getAll()
+- Endpoint affected: GET /api/dreams
+
+### Behavior
+- First request → Cache MISS → Database query executed (DB HIT)
+- Subsequent requests → Cache HIT → Data returned from memory
+- Database is not queried while cache is valid
+
+### Cache Invalidation
+To prevent stale data, cache is cleared automatically after:
+
+- create(...)
+- update(...)
+- delete(...)
+
+### Verification
+Cache behavior was verified via console logs:
+
+- First GET request triggers "DB HIT: findAll()"
+- Repeated GET requests return cached data without hitting the database
+
+First request (Cache MISS → Database accessed):
+![db_hit_with.png](docs/screenshots/db_hit_with.png)
+
+Repeated request (Cache HIT → No database access):
+![db_hit_without.png](docs/screenshots/db_hit_without.png)
 
 ---
 
